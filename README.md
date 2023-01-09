@@ -4,7 +4,7 @@ Microservice architecture (Kubernetes) for a service that determines the eye sta
 Project Type A: Architectural Design Prototype -> requires a working live demonstration
 
 ## Description
-The Service is driven by a pretrained YOLOv5 model that determines the eye state (e.g. is the eye open, is it closed or is no eye visible) in night vision images. A special focus will lie on the horizontal as well as the vertical autoscaler provided by the GCS-Platform.
+The goal is to provide a REST service that accepts nightvision images (of human faces) and returns a classification for that image with 3 possible output classes (eyes open, eyes closed, no eyes) and use kubernetes to scale the service using horizontal and vertical pod autoscalers. The Classification itself will be driven by a pretrained YOLOv5 model. Prometheus will be used for monitoring and the corresponding visualisations will be done using grafana. A special focus will lie on the horizontal as well as the vertical autoscaler provided by the GCS-Platform.
 
 ## Proposal
 1. A REST service is implemented that utilizes the already existing YOLO-model.
