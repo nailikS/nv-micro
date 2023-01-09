@@ -16,7 +16,7 @@ The goal is to provide a REST service that accepts nightvision images (of human 
 7. Preparation for live demo is done.
 
 ## Architecture
-
+![Architectural Design](nvmicro.png)
 
 ## Goal
 The goal is to observe scaling behaviour when the service is put under heavy load and other test scenarios. 
