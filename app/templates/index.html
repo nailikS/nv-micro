@@ -1,0 +1,61 @@
+<html>
+
+
+    <head>
+        <title>CLC3 - NVmicro</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/styles.css") }}">
+
+        <script>
+          document.addEventListener("DOMContentLoaded", () => {
+            let img = document.getElementById('imgResult');
+            let btnUpload = document.getElementById('btnUpload');
+            let errorMsg = document.getElementById('errorMessage');
+
+            btnUpload.onclick = () => {
+              let formData = new FormData(document.getElementById('formUpload'));
+              let file = formData.get('file');
+              if(file.size <= 0 || (file.type != 'image/png' && file.type != 'image/jpeg')) {
+                errorMsg.hidden = false;
+                return;
+              }
+              errorMsg.hidden = true;
+
+              fetch(document.location.href, {
+                method: 'post',
+                body: formData,
+              })
+              .then((response) => response.blob())
+              .then((blob) => {
+                img.src = URL.createObjectURL(blob);
+                img.hidden = false;
+              })
+          };
+          });
+        </script>
+    </head>
+    <body>
+
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="/">CLC3 - NVmicro</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </nav>
+
+    <div class="upload-container">
+        <h1>Upload nightvision image</h1>
+        <form id="formUpload" class="upload-item" method=post enctype=multipart/form-data>
+            <input type="file" name="file" class="btn btn-secondary">
+            <input id="btnUpload" class="btn btn-primary" value="Process image" readonly>
+        </form>
+        <p id="errorMessage" style="color: red" hidden>You need to upload an image (jpg/png)!</p>
+        <br>
+        <img id="imgResult" hidden>
+    </div>
+   </body>
+</html>
