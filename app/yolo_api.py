@@ -1,5 +1,5 @@
 import io
-from flask import Flask, render_template, request, redirect, send_file
+from flask import Flask, render_template, request, redirect, send_file, Response
 from PIL import Image
 import torch
 
@@ -29,12 +29,12 @@ def process_request():
     return render_template('index.html')
 
 
-@app.route('/metrics', methods=['GET'])
+@app.route('/metrics')
 def get_request_count():
     global request_count
     return_value = request_count / METRIC_POLL_FREQUENCY
     request_count = 0
-    return 'requests_per_s ' + str(return_value)
+    return Response('# TYPE requests_per_s gauge\nrequests_per_s ' + str(return_value), mimetype='text/plain')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
