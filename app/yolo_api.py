@@ -1,8 +1,7 @@
 import io
-from flask import Flask, render_template, request, redirect, send_file, jsonify
+from flask import Flask, render_template, request, redirect, send_file
 from PIL import Image
 import torch
-import pandas as pd
 
 METRIC_POLL_FREQUENCY = 15
 
@@ -38,4 +37,4 @@ def get_request_count():
     return 'requests_per_s ' + str(return_value)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
