@@ -34,7 +34,7 @@ def get_request_count():
     global request_count
     return_value = request_count / METRIC_POLL_FREQUENCY
     request_count = 0
-    return Response('# TYPE requests_per_s gauge\nrequests_per_s ' + str(return_value), mimetype='text/plain')
+    return Response('# TYPE requests_per_s gauge\nrequests_per_s ' + str(return_value) + '\n', mimetype='text/plain')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
