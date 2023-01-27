@@ -19,8 +19,8 @@ process_start_time = str(time.time())
 # load model
 model = Yolov5Onnx(classes=['eye_open', 'eye_closed'],
                     backend="onnx",
-                    weight='cpu',
-                    device='best.onnx')
+                    weight='best.onnx',
+                    device='cpu')
 
 def clear_stored_images(interval_s=15, older_than_s=60):
     older_than_ns = older_than_s * 1000000000
