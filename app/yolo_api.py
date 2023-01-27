@@ -6,10 +6,9 @@ import cv2
 import time
 from cvu.detector.yolov5 import Yolov5 as Yolov5Onnx
 
-METRIC_POLL_FREQUENCY = 15
-
 app = Flask(__name__)
 
+last_request_time = time.time()
 request_count = 0
 process_start_time = str(time.time())
 
@@ -53,10 +52,15 @@ def process_request():
 
 @app.route('/metrics')
 def get_request_count():
+    global last_request_time
     global request_count
     global process_start_time
-    
-    return_value = request_count / METRIC_POLL_FREQUENCY
+
+    current_time = time.time()
+    request_time_difference = time.time() - last_request_time
+    last_request_time = current_time
+
+    return_value = request_count / request_time_difference
     request_count = 0
     metrics_string = '# TYPE requests_per_s gauge\nrequests_per_s ' + str(return_value) + '\n\n'
 
