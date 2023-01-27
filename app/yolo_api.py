@@ -1,14 +1,32 @@
 import io
 from flask import Flask, render_template, request, redirect, send_file, Response
 from PIL import Image
-import torch
+import numpy as np
+import cv2
+from cvu.detector.yolov5 import Yolov5 as Yolov5Onnx
 
 METRIC_POLL_FREQUENCY = 15
 
 app = Flask(__name__)
 
-model = torch.hub.load('ultralytics/yolov5', 'custom', 'best.onnx')
 request_count = 0
+
+def detect_image(device, weight, image):
+    # load model
+    model = Yolov5Onnx(classes=['eye_open', 'eye_closed'],
+                       backend="onnx",
+                       weight=weight,
+                       device=device)
+
+    # inference
+    preds = model(image)
+    print(preds)
+
+    # draw image
+    preds.draw(image)
+
+    # write image
+    cv2.imwrite('static/image0.jpg', image)
 
 @app.route('/', methods=['GET', 'POST'])
 def process_request():
@@ -22,8 +40,9 @@ def process_request():
             return
 
         img_bytes = file.read()
-        result = model(Image.open(io.BytesIO(img_bytes)))
-        result.save(save_dir='static', exist_ok=True)
+        opencvImage = cv2.cvtColor(np.array(Image.open(io.BytesIO(img_bytes))), cv2.COLOR_RGB2BGR) # dont know if necessary
+        detect_image('cpu', 'best.onnx', opencvImage)
+        #result.save(save_dir='static', exist_ok=True)
 
         return send_file('static/image0.jpg', mimetype='image/jpg')
     return render_template('index.html')
