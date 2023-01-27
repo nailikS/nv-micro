@@ -16,6 +16,12 @@ last_request_time = time.time()
 request_count = 0
 process_start_time = str(time.time())
 
+# load model
+model = Yolov5Onnx(classes=['eye_open', 'eye_closed'],
+                    backend="onnx",
+                    weight='cpu',
+                    device='best.onnx')
+
 def clear_stored_images(interval_s=15, older_than_s=60):
     older_than_ns = older_than_s * 1000000000
     while True:
@@ -34,13 +40,7 @@ def clear_stored_images(interval_s=15, older_than_s=60):
 clear_stored_images_thread = threading.Thread(target=clear_stored_images, daemon=True)
 clear_stored_images_thread.start()
 
-def detect_image(device, weight, image, filename='static/0.jpg'):
-    # load model
-    model = Yolov5Onnx(classes=['eye_open', 'eye_closed'],
-                       backend="onnx",
-                       weight=weight,
-                       device=device)
-
+def detect_image(image, filename='static/0.jpg'):
     # inference
     preds = model(image)
     print(preds)
@@ -68,7 +68,7 @@ def process_request():
 
         img_bytes = file.read()
         opencvImage = cv2.cvtColor(np.array(Image.open(io.BytesIO(img_bytes))), cv2.COLOR_RGB2BGR) # dont know if necessary
-        detect_image('cpu', 'best.onnx', opencvImage, filename=filename)
+        detect_image(opencvImage, filename=filename)
         #result.save(save_dir='static', exist_ok=True)
 
         return send_file(filename, mimetype='image/jpg')
