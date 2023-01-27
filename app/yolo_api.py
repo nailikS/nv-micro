@@ -10,6 +10,7 @@ import threading
 import glob
 from pathlib import Path
 from multiprocessing import Value
+import psutil
 
 app = Flask(__name__)
 
@@ -52,11 +53,13 @@ def detect_image(image, filename='static/0.jpg'):
     # write image
     cv2.imwrite(filename, image)
 
-@app.route('/', methods=['GET', 'POST'])
-def process_request():
+@app.before_request
+def increment_request_counter():
     with request_count.get_lock():
         request_count.value = request_count.value + 1
 
+@app.route('/', methods=['GET', 'POST'])
+def process_request():
     if request.method == 'POST':
         if 'file' not in request.files:
             return redirect(request.url)
@@ -90,6 +93,19 @@ def get_request_count():
         request_count.value = 0
     
     metrics_string = '# TYPE requests_per_s gauge\nrequests_per_s ' + str(return_value) + '\n\n'
+
+    cpu_load_1m, cpu_load_5m, cpu_load_15m = psutil.getloadavg()
+    cpu_load_1m = cpu_load_1m * 100
+    cpu_load_5m = cpu_load_5m * 100
+    cpu_load_15m = cpu_load_15m * 100
+
+    metrics_string = metrics_string + '# TYPE cpu_avg_load_1m gauge\ncpu_avg_load_1m ' + str(cpu_load_1m) + '\n'
+    metrics_string = metrics_string + '# TYPE cpu_avg_load_5m gauge\ncpu_avg_load_5m ' + str(cpu_load_5m) + '\n'
+    metrics_string = metrics_string + '# TYPE cpu_avg_load_15m gauge\ncpu_avg_load_15m ' + str(cpu_load_15m) + '\n\n'
+
+    ram_usage = psutil.virtual_memory()
+    metrics_string = metrics_string + '# TYPE ram_usage_percent gauge\nram_usage_percent ' + str(ram_usage[2]) + '\n'
+    metrics_string = metrics_string + '# TYPE ram_usage_gb gauge\nram_usage_gb ' + str(ram_usage[3] / 1000000000) + '\n\n'
 
     # get current unix timestamp
     metrics_string = metrics_string + '# TYPE process_start_time_seconds gauge\nprocess_start_time_seconds ' + process_start_time + '\n'
