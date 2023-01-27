@@ -1,10 +1,14 @@
 import io
+import os
 from flask import Flask, render_template, request, redirect, send_file, Response
 from PIL import Image
 import numpy as np
 import cv2
 import time
 from cvu.detector.yolov5 import Yolov5 as Yolov5Onnx
+import threading
+import glob
+from pathlib import Path
 
 app = Flask(__name__)
 
@@ -12,7 +16,25 @@ last_request_time = time.time()
 request_count = 0
 process_start_time = str(time.time())
 
-def detect_image(device, weight, image):
+def clear_stored_images(interval_s=15, older_than_s=60):
+    older_than_ns = older_than_s * 1000000000
+    while True:
+        current_time_ns = time.time_ns()
+        cut_off_time_ns = current_time_ns - older_than_ns
+
+        jpg_paths = glob.glob('static\\\[0-9]*.jpg')
+        for jpg_path in jpg_paths:
+            file_timestamp = int(Path(jpg_path).stem)
+            if(cut_off_time_ns > file_timestamp):
+                os.remove(jpg_path)
+
+        time.sleep(interval_s)
+
+
+clear_stored_images_thread = threading.Thread(target=clear_stored_images, daemon=True)
+clear_stored_images_thread.start()
+
+def detect_image(device, weight, image, filename='static/0.jpg'):
     # load model
     model = Yolov5Onnx(classes=['eye_open', 'eye_closed'],
                        backend="onnx",
@@ -27,7 +49,7 @@ def detect_image(device, weight, image):
     preds.draw(image)
 
     # write image
-    cv2.imwrite('static/image0.jpg', image)
+    cv2.imwrite(filename, image)
 
 @app.route('/', methods=['GET', 'POST'])
 def process_request():
@@ -41,12 +63,15 @@ def process_request():
         if not file:
             return
 
+        current_time_ns = time.time_ns()
+        filename = 'static/' + str(current_time_ns) + '.jpg'
+
         img_bytes = file.read()
         opencvImage = cv2.cvtColor(np.array(Image.open(io.BytesIO(img_bytes))), cv2.COLOR_RGB2BGR) # dont know if necessary
-        detect_image('cpu', 'best.onnx', opencvImage)
+        detect_image('cpu', 'best.onnx', opencvImage, filename=filename)
         #result.save(save_dir='static', exist_ok=True)
 
-        return send_file('static/image0.jpg', mimetype='image/jpg')
+        return send_file(filename, mimetype='image/jpg')
     return render_template('index.html')
 
 
