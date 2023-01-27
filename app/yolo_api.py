@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, redirect, send_file, Response
 from PIL import Image
 import numpy as np
 import cv2
+import time
 from cvu.detector.yolov5 import Yolov5 as Yolov5Onnx
 
 METRIC_POLL_FREQUENCY = 15
@@ -10,6 +11,7 @@ METRIC_POLL_FREQUENCY = 15
 app = Flask(__name__)
 
 request_count = 0
+process_start_time = str(time.time())
 
 def detect_image(device, weight, image):
     # load model
@@ -31,6 +33,7 @@ def detect_image(device, weight, image):
 @app.route('/', methods=['GET', 'POST'])
 def process_request():
     global request_count
+
     request_count = request_count + 1
     if request.method == 'POST':
         if 'file' not in request.files:
@@ -51,9 +54,16 @@ def process_request():
 @app.route('/metrics')
 def get_request_count():
     global request_count
+    global process_start_time
+    
     return_value = request_count / METRIC_POLL_FREQUENCY
     request_count = 0
-    return Response('# TYPE requests_per_s gauge\nrequests_per_s ' + str(return_value) + '\n', mimetype='text/plain')
+    metrics_string = '# TYPE requests_per_s gauge\nrequests_per_s ' + str(return_value) + '\n\n'
+
+    # get current unix timestamp
+    metrics_string = metrics_string + '# TYPE process_start_time_seconds gauge\nprocess_start_time_seconds ' + process_start_time + '\n'
+    
+    return Response(metrics_string, mimetype='text/plain')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
