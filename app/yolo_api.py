@@ -89,10 +89,12 @@ def get_request_count():
     last_request_time = current_time
 
     with request_count.get_lock():
+        request_count_total = request_count.value
         return_value = request_count.value / request_time_difference
         request_count.value = 0
     
-    metrics_string = '# TYPE requests_per_s gauge\nrequests_per_s ' + str(return_value) + '\n\n'
+    metrics_string = '# TYPE requests_per_s gauge\nrequests_per_s ' + str(return_value) + '\n'
+    metrics_string = metrics_string + '# TYPE requests_since_last gauge\nrequests_since_last ' + str(request_count_total) + '\n\n'
 
     cpu_load_1m, cpu_load_5m, cpu_load_15m = psutil.getloadavg()
     cpu_load_1m = cpu_load_1m * 100
@@ -113,4 +115,4 @@ def get_request_count():
     return Response(metrics_string, mimetype='text/plain')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0')
