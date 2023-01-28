@@ -14,12 +14,12 @@ spec:
     spec:
       containers:
       - name: nvmicro
-        image: uberman42/nvmicro:v0.8.2
+        image: uberman42/nvmicro:v0.8.3
         ports:
         - containerPort: 5000
         resources:
           requests:
-            cpu: 500m
+            cpu: 250m
       - name: prometheus-to-sd
         image: gcr.io/google-containers/prometheus-to-sd:v0.5.0
         command: ["/monitor"]
@@ -28,6 +28,9 @@ spec:
         - --stackdriver-prefix=custom.googleapis.com
         - --pod-id=$(POD_ID)
         - --namespace-id=$(POD_NAMESPACE)
+        resources:
+          requests:
+            cpu: 250m
         env:
         # save Kubernetes metadata as environment variables for use in metrics
         - name: POD_ID
