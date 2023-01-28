@@ -28,15 +28,46 @@ The final presentation will include a live demo with visualization of the cluste
 3. Configure a node exporter:
 4. Open a terminal (make sure you have gcloud cli and its kubectl package installed) 
 5. Navigate to the manifests folder in this repository and execute
-    > `kubectl apply -f nodeexporter.yaml`
+    ```
+    kubectl apply -f nodeexporter.yaml
+    ```    
 6. Apply the nvmicro deployment to the cluster
-    > `kubectl apply -f deployment.yaml`
+    ```
+    kubectl apply -f deployment.yaml
+    ```
 7. Apply the Load Balancer service to the cluster
-    > `kubectl apply -f loadbalancer.yaml`
+    ```
+    kubectl apply -f loadbalancer.yaml
+    ```
 8. Apply Stackdriver Adapter manifest to make custom metrics available for the Horizontal Pod Autoscaler
-    > `kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/k8s-stackdriver/master/custom-metrics-stackdriver-adapter/deploy/production/adapter_new_resource_model.yaml`
-9. 
 
+    ```
+    kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/k8s-stackdriver/master/custom-metrics-stackdriver-adapter/deploy/production/adapter_new_resource_model.yaml
+    ```
+9. Configure the Horizontal Pod Autoscaler
+    ```
+    kubectl apply -f hpa.yaml
+    ```
+10. Verify that the Autoscaler is infact running and able to read the custom metrics
+    ```
+    kubectl describe hpa hpa-nvmicro
+    ```
+    > It is possible that directly after starting the hpa the console will throw a warning stating that the metrics couldnt be read, the message should disapper after a few seconds.
+11. Enable Vertical Pod Autoscaling for the cluster 
+    ```
+    gcloud container clusters update CLUSTER_NAME --enable-vertical-pod-autoscaling
+    ```
+    > Note: This will restart the control plane of the specified cluster and may take a few minutes
+12. Create an actual Vertical Pod Autoscaler
+    ```
+    kubectl create -f vpa.yaml
+    ```
 
-# Final Structure
+# Solution
+
+## Overview
 ![Architectural Design](./images/architecture.png)
+
+## Research
+* The entirety of the glcoud documentation 
+* 
