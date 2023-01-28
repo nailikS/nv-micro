@@ -8,3 +8,4 @@ Flask==2.2.2
 charset-normalizer==3.0.1
 GitPython==3.1.30
 humanfriendly==10.0
+psutil
