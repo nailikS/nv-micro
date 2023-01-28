@@ -30,7 +30,7 @@ spec:
         - --namespace-id=$(POD_NAMESPACE)
         resources:
           requests:
-            cpu: 250m
+            cpu: 50m
         env:
         # save Kubernetes metadata as environment variables for use in metrics
         - name: POD_ID

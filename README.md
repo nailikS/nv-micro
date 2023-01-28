@@ -21,3 +21,22 @@ The goal is to provide a REST service that accepts nightvision images (of human 
 ## Goal
 The goal is to observe scaling behaviour when the service is put under heavy load and other test scenarios. 
 The final presentation will include a live demo with visualization of the cluster for different scenarios.
+
+# How to get started:
+1. Create a new GKE-Cluster [here](https://cloud.google.com/kubernetes-engine?hl=en)
+2. Navigate to the gcloud [monitoring api](https://console.cloud.google.com/monitoring) and enable Managed Service for Prometheus for your cluster 
+3. Configure a node exporter:
+4. Open a terminal (make sure you have gcloud cli and its kubectl package installed) 
+5. Navigate to the manifests folder in this repository and execute
+    > `kubectl apply -f nodeexporter.yaml`
+6. Apply the nvmicro deployment to the cluster
+    > `kubectl apply -f deployment.yaml`
+7. Apply the Load Balancer service to the cluster
+    > `kubectl apply -f loadbalancer.yaml`
+8. Apply Stackdriver Adapter manifest to make custom metrics available for the Horizontal Pod Autoscaler
+    > `kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/k8s-stackdriver/master/custom-metrics-stackdriver-adapter/deploy/production/adapter_new_resource_model.yaml`
+9. 
+
+
+# Final Structure
+![Architectural Design](architecture.png)
