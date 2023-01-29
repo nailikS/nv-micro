@@ -69,7 +69,7 @@ The final presentation will include a live demo with visualization of the cluste
     ```
     and copy the `LoadBalancer Ingress` IP address 
 14. Check if the frontend is available by opening the IP address in a browser
-15. Check if the Horizontal Autoscaler works as desired by sending POST requests regularly. This can be achieved with a tool such as [Insomnia](https://insomnia.rest/). The body of the POST request needs to be `multipart/form-data` with one parameter named `file` which specifies the file to upload. The feature "Repeat on interval" in Insomnia can be used for a simple load test.
+15. Check if the Horizontal Autoscaler works as desired by sending POST requests regularly. This can be achieved with a tool such as [Insomnia](https://insomnia.rest/). The body of the POST request needs to be of the form `multipart/form-data` with one parameter named `file` which specifies the file to upload. The feature "Repeat on interval" in Insomnia can be used for a simple load test.
 
 Request using curl:
 ```
