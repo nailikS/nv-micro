@@ -69,7 +69,12 @@ The final presentation will include a live demo with visualization of the cluste
 ![Architectural Design](./images/architecture.png)
 
 ## Research
-* The entirety of the glcoud documentation 
+* https://cloud.google.com/stackdriver/docs/managed-prometheus/hpa
+* https://cloud.google.com/kubernetes-engine/docs/tutorials/autoscaling-metrics#custom-prometheus
+* https://github.com/GoogleCloudPlatform/k8s-stackdriver/blob/master/custom-metrics-stackdriver-adapter/README.md
+* https://github.com/GoogleCloudPlatform/k8s-stackdriver/tree/master/custom-metrics-stackdriver-adapter/examples/prometheus-to-sd
+* https://prometheus.io/docs/instrumenting/exposition_formats/
+* https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
 
 ## Lessons learned
 * Gcloud is complex
