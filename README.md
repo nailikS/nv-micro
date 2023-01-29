@@ -70,4 +70,11 @@ The final presentation will include a live demo with visualization of the cluste
 
 ## Research
 * The entirety of the glcoud documentation 
-* 
+
+## Lessons learned
+* Gcloud is complex
+* Making the various services work together can be challenging
+* Trial and error in the cloud is very time intensive
+* Finding errors often is frustrating
+* Everything sounds easy in the tutorials but reality might look different
+* Blindly following tutorials won't work out in most cases
